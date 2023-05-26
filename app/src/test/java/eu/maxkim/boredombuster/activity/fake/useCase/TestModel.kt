@@ -1,4 +1,3 @@
-class TestModel(){
     val activity1 = Activity(
     name = "Learn Android",
     type = Activity.Type.Recreational,
@@ -18,4 +17,3 @@ class TestModel(){
     key = "223344",
     link = "www.dog.com"
   )
-}
