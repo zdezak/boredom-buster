@@ -1,4 +1,6 @@
-    val activity1 = Activity(
+import eu.maxkim.boredombuster.activity.model.Activity
+
+val activity1 = Activity(
     name = "Learn Android",
     type = Activity.Type.Recreational,
     participantCount = 2,
@@ -6,9 +8,9 @@
     accessibility = 0.2f,
     key = "112233",
     link = "www.dance.com"
-  )
-  
-  val activity2 = Activity(
+)
+
+val activity2 = Activity(
     name = "Pet a dog",
     type = Activity.Type.Relaxation,
     participantCount = 1,
@@ -16,4 +18,4 @@
     accessibility = 0.1f,
     key = "223344",
     link = "www.dog.com"
-  )
+)
