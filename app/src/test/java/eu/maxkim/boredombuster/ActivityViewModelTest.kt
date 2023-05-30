@@ -58,4 +58,22 @@ class ActivityViewModelTest(){
        val actualState = viewModel.uiState.value
        assert(actualState, expectedUiState)
   }
+  
+  @Test
+  fun 'calling loadNewActivity() updates ui state with new activity'(){
+   val fakeGetRandomActivity = FakeGetRandomActivity()       
+   val viewModel = ActivityViewModel(
+          fakeGetRandomActivity,
+          FakeIsActivitySaved(),
+          FakeSaveActivity(),
+          FakeDeleteActivity()
+          )
+          
+          coroutineRule.testDispatcher.scheduler.runCurrent()
+          val expectedUiState = NEwsActivityUiState.Success(activity2, false)
+          fakeGetRandomActivity.activity = activity2
+   viewModel.loadNewActivity()
+   coroutineRule.testDispatcher.scheduler.runCurrent()
+   val actualState = viewModel.uiState.value
+   assert(actualState, expectedUiState)
 }
