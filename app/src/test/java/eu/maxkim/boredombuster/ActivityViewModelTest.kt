@@ -44,4 +44,18 @@ class ActivityViewModelTest(){
    val currentState = viewModel.uiState.value
    assert(currentState is NewsActivityUiState.Error)
   }
+  
+  @Test
+  fun 'if activity is already saved, ui states isFavorite is set to true'(){
+       val viewModel = ActivityViewModel(
+    FakeGetRandomActivity(),
+    FakeIsActivitySaved(),
+    FakeSaveActivity(isActivity = true),
+    FakeDeleteActivity()
+    )
+       val expectedUiState = NewsActivityUiState.Success(activity, true)
+       coroutineRule.testDispatcher.scheduler.runCurrent()
+       val actualState = viewModel.uiState.value
+       assert(actualState, expectedUiState)
+  }
 }
