@@ -108,4 +108,18 @@ class ActivityViewModelTest {
         coroutineRule.testDispatcher.scheduler.runCurrent()
         assert(fakeSaveActivity.wasCalling)
     }
+    
+    //Seventh scenario
+    @Test`calling setIsFavorite(false) triggers DeleteActivity use case`(){
+        val fakeDeleteActivity = FakeDeleteActivity()
+        val viewModel = NewActivityViewModel(
+            FakeGetRandomActivity(),
+            FakeSaveActivity(),
+            fakeDeleteActivity,
+            FakeIsActivitySaved()
+        )
+        viewModel.setIsFavorite(activity1, false)
+        coroutineRule.testDispatcher.scheduler.runCurrent()
+        assert(fakeDeleteActivity.wasCalled)
+    }
 }
