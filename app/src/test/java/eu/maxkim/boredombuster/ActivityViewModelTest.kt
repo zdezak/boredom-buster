@@ -135,20 +135,22 @@ class ActivityViewModelTest {
             FakeIsActivitySaved()
         )
         assert(viewModel.uiState.value is NewActivityUiState.Loading)
+        
         launch{
             viewModel.uiState.test{
                 with(awaitItem()){
                     assert(this is NewActivityUiState.Success)
                     assertEquals((this as NewActivityUiState.Success).activity, activity1)
                 }
-                            assert(awaitItem() is NewActivityUiState.Loading)
-                            with(awaitItem()){
-                                assert(this is NewActivityUiState.Success)
+                assert(awaitItem() is NewActivityUiState.Loading)
+                with(awaitItem()){
+                    assert(this is NewActivityUiState.Success)
                     assertEquals((this as NewActivityUiState.Success).activity, activity2)
-                            }
-                            canselAndIgnoreRemainingEvent()
+                }
+                canselAndIgnoreRemainingEvent()
             }            
         }
+        
         runCurrent()
         
         fakeGetRandomActivity.activity = activity2
