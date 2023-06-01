@@ -157,4 +157,5 @@ class ActivityViewModelTest {
         viewModel.loadNewActivity()
         runCurrent()
     }
+    }
 }
