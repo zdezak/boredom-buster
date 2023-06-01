@@ -94,4 +94,18 @@ class ActivityViewModelTest {
         val actualState = viewModel.uiState.value
         assertEquals(actualState, expectedUiState)
     }
+    
+    //Sixth scenario
+    @Test  `calling setIsFavorite(true) triggers SaveActivity use case` (){
+        val fakeSaveActivity = FakeSaveActivity()
+        val viewModel = NewActivityViewModel(
+            FakeGetRandomActivity(),
+            fakeSaveActivity,
+            FakeDeleteActivity(),
+            FakeIsActivitySaved()
+        )
+        viewModel.setIsFavorite(activity1, true)
+        coroutineRule.testDispatcher.scheduler.runCurrent()
+        assert(fakeSaveActivity.wasCalling)
+    }
 }
