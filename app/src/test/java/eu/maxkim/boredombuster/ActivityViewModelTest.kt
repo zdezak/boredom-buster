@@ -7,9 +7,13 @@ import FakeIsActivitySaved
 import FakeSaveActivity
 import activity1
 import activity2
+import app.cash.turbine.test
 import eu.maxkim.boredombuster.activity.ui.newactivity.NewActivityUiState
 import eu.maxkim.boredombuster.activity.ui.newactivity.NewActivityViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.runCurrent
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -94,10 +98,10 @@ class ActivityViewModelTest {
         val actualState = viewModel.uiState.value
         assertEquals(actualState, expectedUiState)
     }
-    
+
     //Sixth scenario
-    @Test  
-    fun `calling setIsFavorite(true) triggers SaveActivity use case` (){
+    @Test
+    fun `calling setIsFavorite(true) triggers SaveActivity use case`() {
         val fakeSaveActivity = FakeSaveActivity()
         val viewModel = NewActivityViewModel(
             FakeGetRandomActivity(),
@@ -107,12 +111,12 @@ class ActivityViewModelTest {
         )
         viewModel.setIsFavorite(activity1, true)
         coroutineRule.testDispatcher.scheduler.runCurrent()
-        assert(fakeSaveActivity.wasCalling)
+        assert(fakeSaveActivity.wasCalled)
     }
-    
+
     //Seventh scenario
     @Test
-    fun `calling setIsFavorite(false) triggers DeleteActivity use case`(){
+    fun `calling setIsFavorite(false) triggers DeleteActivity use case`() {
         val fakeDeleteActivity = FakeDeleteActivity()
         val viewModel = NewActivityViewModel(
             FakeGetRandomActivity(),
@@ -124,10 +128,11 @@ class ActivityViewModelTest {
         coroutineRule.testDispatcher.scheduler.runCurrent()
         assert(fakeDeleteActivity.wasCalled)
     }
+
     //Testing flow
     @Test
-    fun `calling loadNewActivity() twice goes through expected ui state` () = runTest{
-        val fakeGetRandomactivity = FakeGetRandomActivity
+    fun `calling loadNewActivity() twice goes through expected ui state`() = runTest {
+        val fakeGetRandomActivity = FakeGetRandomActivity()
         val viewModel = NewActivityViewModel(
             fakeGetRandomActivity,
             FakeSaveActivity(),
@@ -135,27 +140,26 @@ class ActivityViewModelTest {
             FakeIsActivitySaved()
         )
         assert(viewModel.uiState.value is NewActivityUiState.Loading)
-        
-        launch{
-            viewModel.uiState.test{
-                with(awaitItem()){
+
+        launch {
+            viewModel.uiState.test {
+                with(awaitItem()) {
                     assert(this is NewActivityUiState.Success)
                     assertEquals((this as NewActivityUiState.Success).activity, activity1)
                 }
                 assert(awaitItem() is NewActivityUiState.Loading)
-                with(awaitItem()){
+                with(awaitItem()) {
                     assert(this is NewActivityUiState.Success)
                     assertEquals((this as NewActivityUiState.Success).activity, activity2)
                 }
-                canselAndIgnoreRemainingEvent()
-            }            
+                cancelAndIgnoreRemainingEvents()
+            }
         }
-        
+
         runCurrent()
-        
+
         fakeGetRandomActivity.activity = activity2
         viewModel.loadNewActivity()
         runCurrent()
-    }
     }
 }
