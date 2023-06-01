@@ -96,7 +96,8 @@ class ActivityViewModelTest {
     }
     
     //Sixth scenario
-    @Test  `calling setIsFavorite(true) triggers SaveActivity use case` (){
+    @Test  
+    fun `calling setIsFavorite(true) triggers SaveActivity use case` (){
         val fakeSaveActivity = FakeSaveActivity()
         val viewModel = NewActivityViewModel(
             FakeGetRandomActivity(),
@@ -110,7 +111,8 @@ class ActivityViewModelTest {
     }
     
     //Seventh scenario
-    @Test`calling setIsFavorite(false) triggers DeleteActivity use case`(){
+    @Test
+    fun `calling setIsFavorite(false) triggers DeleteActivity use case`(){
         val fakeDeleteActivity = FakeDeleteActivity()
         val viewModel = NewActivityViewModel(
             FakeGetRandomActivity(),
@@ -121,5 +123,36 @@ class ActivityViewModelTest {
         viewModel.setIsFavorite(activity1, false)
         coroutineRule.testDispatcher.scheduler.runCurrent()
         assert(fakeDeleteActivity.wasCalled)
+    }
+    //Testing flow
+    @Test
+    fun `calling loadNewActivity() twice goes through expected ui state` () = runTest{
+        val fakeGetRandomactivity = FakeGetRandomActivity
+        val viewModel = NewActivityViewModel(
+            fakeGetRandomActivity,
+            FakeSaveActivity(),
+            FakeDeleteActivity(),
+            FakeIsActivitySaved()
+        )
+        assert(viewModel.uiState.value is NewActivityUiState.Loading)
+        launch{
+            viewModel.uiState.test{
+                with(awaitItem()){
+                    assert(this is NewActivityUiState.Success)
+                    assertEquals((this as NewActivityUiState.Success).activity, activity1)
+                }
+                            assert(awaitItem() is NewActivityUiState.Loading)
+                            with(awaitItem()){
+                                assert(this is NewActivityUiState.Success)
+                    assertEquals((this as NewActivityUiState.Success).activity, activity2)
+                            }
+                            canselAndIgnoreRemainingEvent()
+            }            
+        }
+        runCurrent()
+        
+        fakeGetRandomActivity.activity = activity2
+        viewModel.loadNewActivity()
+        runCurrent()
     }
 }
