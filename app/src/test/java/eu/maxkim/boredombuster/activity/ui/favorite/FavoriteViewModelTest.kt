@@ -36,4 +36,16 @@ class FavoriteViewModelTest(){
     val actualList = (activityListCaptor.value as FavoritesUiState.List).activityList)
     assertEquals(actualList, expectedList)
   }
+  
+  @Test
+  fun `the view model maps empty list of activities to empty ui state` (){
+    val liveDataToReturn = MutableLiveData<List<Activity>>()
+    .apply {value = listOf()}
+    whenver(mockGetFavoriteActivities.invoke()).doReturn(liveDataToReturn)
+    val viewModel = FavoriteViewModel(mockGetFavoriteActivities, mockDeleteActivity)
+    viewModel.uiStateLiveData.observeForever(activityListObserver)
+    
+    verify(activityListOserver, times(1)).onChanged(activityListCaptor.capture())
+    assert( activityListCaptor.value is FavoriteUiState.Empty)
+  }
 }
