@@ -7,6 +7,9 @@ class FavoriteViewModelTest(){
   @get:Rule
   val instantExecutorRule = InstantTaskExecutorRule()
   
+  @get:Rule
+  val coroutineRule = CoroutineRule()
+  
   private val mockGetFavoriteActivities: GetFavoriteActivities = mock()
   private val mockDeleteActivity: DeleteActivity = mock()    
   private val activityListObserver: Observer<FavoritesUIState> = mock()
@@ -47,5 +50,14 @@ class FavoriteViewModelTest(){
     
     verify(activityListOserver, times(1)).onChanged(activityListCaptor.capture())
     assert( activityListCaptor.value is FavoriteUiState.Empty)
+  }
+  
+  @Test
+  fun `calling deleteActivity() interacts with the correct use case` (){
+    val viewModel = FavoritesViewModel(mockGetFavoriteActivities, mockDeleteActivity)
+    viewModel.deleteActivity(activity1)
+    advanceUntilIdle()
+    verify(mockDelete.Activity, times(1)).invoke(activity1)
+    
   }
 }
