@@ -1,3 +1,17 @@
 class ActivityLocalDataSourceImplTest{
-
+  private lateinit var activityDao: ActivityDao
+  private lateinit var database: AppDatabase
+  
+  @Before
+  fun createDb(){
+    val context = ApplicationProvider.getApplicationContext<Context>()
+    database = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java)
+    .build()
+    activityDao = database.activityDao()
+  }
+  
+  @After
+  fun closeDb(){
+    database.close()
+  }
 }
