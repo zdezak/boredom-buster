@@ -14,4 +14,11 @@ class ActivityLocalDataSourceImplTest{
   fun closeDb(){
     database.close()
   }
+  
+  @Test
+  fun canSaveActivityToTheDbAndReadIt() = runTest{
+    val activityLocalDataSourse = ActivityLocalDataSourceImpl(activityDao)
+    activityLocalDataSource.saveActivity(androidActivity1)
+    assert(activityLocalDataSource.isActivitySaved(androidActivity1.key))
+  }
 }
