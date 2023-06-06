@@ -100,4 +100,6 @@ dependencies {
     androidTestImplementation "androidx.test.ext:junit:$ext_junit_version"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
+    androidTestImplementation "androidx.arch.core:core-testing:$arch_testing_version"
+    androidTestImplementation "org.mockito:mockito-android:$mockito_android_version"
 }
